@@ -6,7 +6,7 @@ import (
     "os"
     "regexp"
     "strings"
-    docker "github.com/fsouza/go-dockerclient"
+    docker "github.com/liyongxian/go-hollicube/pkg/image/docker"
 )
 type Image struct {
     Registry string
