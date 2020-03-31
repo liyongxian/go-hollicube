@@ -20,9 +20,8 @@ func NewClient() *docker.Client{
 }
 
 // load registry
-func (this *Image) LoadImage(client * docker.Client, image *Image) (*Message, error){
+func (this *Image) LoadImage(client * docker.Client, fileName string) (*Message, error){
     //fileName = "/root/go/docker/busybox.tar"
-     fileName := fmt.Sprintf("%s:%s", image.OldName, image.OldTag)
      mes := new(Message)
      mes.Type = "load"
      this = & Image{
