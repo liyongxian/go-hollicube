@@ -9,6 +9,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/liyongxian/go-hollicube/pkg/registry/docker"
 	"github.com/liyongxian/go-hollicube/pkg/registry/upload"
+	"github.com/liyongxian/go-hollicube/pkg/registry/utils"
 	"github.com/nfnt/resize"
 	"github.com/radovskyb/watcher"
 	"github.com/sjqzhang/goutil"
@@ -615,10 +616,11 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 	if _, err = os.Stat(fileInfo.Path); err != nil {
 		os.MkdirAll(DOCKER_DIR+fileInfo.Path, 0775)
 	}
-	//fmt.Println("downloadFromPeer",fileInfo)
+	fmt.Println("downloadFromPeer  fileInfo ",fileInfo)
 	p := strings.Replace(fileInfo.Path, STORE_DIR_NAME+"/", "", 1)
 	//filename=this.util.UrlEncode(filename)
 	downloadUrl = peer + "/" + Config().Group + "/" + p + "/" + filename
+	fmt.Println("downloadFromPeer  downloadUrl",downloadUrl)
 	log.Info("DownloadFromPeer: ", downloadUrl)
 	fpath = DOCKER_DIR + fileInfo.Path + "/" + filename
 	fpathTmp = DOCKER_DIR + fileInfo.Path + "/" + fmt.Sprintf("%s_%s", "tmp_", filename)
@@ -682,6 +684,7 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 			return
 		}
 		this.SaveFileMd5Log(fileInfo, CONST_FILE_Md5_FILE_NAME)
+		fmt.Println("1111111111  upload file success!!!")
 		return
 	}
 	if err = req.ToFile(fpathTmp); err != nil {
@@ -692,6 +695,7 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 	}
 	if fi, err = os.Stat(fpathTmp); err != nil {
 		os.Remove(fpathTmp)
+		fmt.Println("22222222222  upload file success!!!")
 		return
 	}
 
@@ -1063,7 +1067,8 @@ func (this *Server) CheckFileAndSendToPeer(date string, filename string, isForce
 }
 func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 	fmt.Println("postFileToPeer func is called")
-	fmt.Println("postFileToPeer result is  fileInfo ",fileInfo)
+	fmt.Println("postFileToPeer result is  fileInfo ",fileInfo.Path+"/"+fileInfo.Name)
+	fmt.Println("postFileToPeer result is  fileInfo struct  ",fileInfo)
 	var (
 		err      error
 		peer     string
@@ -1101,6 +1106,7 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			}
 		}
 		fpath = DOCKER_DIR + fileInfo.Path + "/" + filename
+		fmt.Println("aaaaaaaaaaaaaaaaaaaaa fpath is ", fpath)
 		if !this.util.FileExists(fpath) {
 			log.Warn(fmt.Sprintf("file '%s' not found", fpath))
 			continue
@@ -1125,6 +1131,8 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			}
 		}
 		postURL = fmt.Sprintf("%s%s", peer, this.getRequestURI("syncfile_info"))
+		fmt.Println("bbbbbbbbbbbbb peer is", peer)
+		fmt.Println("bbbbbbbbbbbbb postURL is", postURL)
 		b := httplib.Post(postURL)
 		b.SetTimeout(time.Second*30, time.Second*30)
 		if data, err = json.Marshal(fileInfo); err != nil {
@@ -1170,6 +1178,7 @@ func (this *Server) SaveFileMd5Log(fileInfo *FileInfo, filename string) {
 	this.queueFileLog <- &FileLog{FileInfo: &info, FileName: filename}
 }
 func (this *Server) saveFileMd5Log(fileInfo *FileInfo, filename string) {
+	fmt.Println("saveFileMd5Log func is called")
 	var (
 		err      error
 		outname  string
@@ -2597,21 +2606,19 @@ func (this *Server) Main() {
 	}
 	err := srv.ListenAndServe()
 	log.Error(err)
-	fmt.Println(err)
 }
-func main() {
-	server.Main()
-	fmt.Println("server info ", server)
-	// save upload
+func saveImage(image *upload.Image, fileName string) error {
+	absFilePath := utils.AbsPath()
+	fileName = fmt.Sprintf("%s/%s", absFilePath, fileName)
 	//fileName := "/root/go/docker/busybox.tar"
+	//fmt.Sprintf("%s:%s", image.OldName, image.OldTag)
 	registry := &upload.ImageRegistry{
 		Username: "bjyimaike@163.com",
 		Password: "emcc7556",
 		ServerAddress: "registry.cn-beijing.aliyuncs.com",
 	}
-
 	var client *docker.Client = upload.NewClient()
-	var image *upload.Image
+	//var image *upload.Image
 	image = &upload.Image {
 		Name: "registry.cn-beijing.aliyuncs.com/hiacloud/busybox",
 		Tag: "latest",
@@ -2619,23 +2626,34 @@ func main() {
 		OldTag: "latest",
 		Registry: registry,
 	}
-	mes, err := image.LoadImage(client, image)
-
+	mes, err := image.LoadImage(client, fileName)
 	if err != nil {
 		fmt.Println("Load Image is fail")
+		return err
 	}else {
 		fmt.Println(mes.Mes)
+		mes, err = image.TagImage(client, image)
+		if err != nil {
+			fmt.Println("Tag Image is fail")
+			return err
+		}else {
+			fmt.Println(mes.Mes)
+			mes, err = image.PushImageCustomRegistry(client, image)
+			if err != nil {
+				fmt.Println("Push Image is fail")
+				return  err
+			}else {
+				fmt.Println(mes.Mes)
+				return nil
+			}
+		}
+
 	}
-	mes, err = image.TagImage(client, image)
-	if err != nil {
-		fmt.Println("Tag Image is fail")
-	}else {
-		fmt.Println(mes.Mes)
-	}
-	mes, err = image.PushImageCustomRegistry(client, image)
-	if err != nil {
-		fmt.Println("Push Image is fail")
-	}else {
-		fmt.Println(mes.Mes)
-	}
+}
+
+func main() {
+	server.Main()
+	fmt.Println("server info ", server)
+	// save upload
+
 }
