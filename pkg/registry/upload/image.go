@@ -49,9 +49,9 @@ func (this *Image)TagImage(client * docker.Client, image * Image) (*Message, err
     //oldImage string, newImage string, newImageTag string
     oldImage := fmt.Sprintf("%s:%s", image.OldName, image.OldTag)
     //oldImage = "busybox:latest"
-    newImage := fmt.Sprintf("%s:%s", image.Name, image.Tag)
+    //newImage := fmt.Sprintf("%s:%s", image.Name, image.Tag)
     //newImage = "registry.cn-beijing.aliyuncs.com/hiacloud/busybox"
-    newImageTag := image.Tag
+   // newImageTag := image.Tag
     //newImageTag = "1.29.1"
     mes := new(Message)
     mes.Type = "tag"
@@ -63,8 +63,8 @@ func (this *Image)TagImage(client * docker.Client, image * Image) (*Message, err
         Message:  mes,
     }*/
     err := client.TagImage(oldImage, docker.TagImageOptions{
-        Repo: newImage,
-        Tag: newImageTag,
+        Repo: image.Name,
+        Tag: image.Tag,
     })
     if err != nil && !strings.Contains(err.Error(), "tag registry fail") {
         mes.Mes = "tag registry error"
