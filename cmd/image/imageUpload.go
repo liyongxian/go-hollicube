@@ -399,7 +399,6 @@ func ParseConfig(filePath string) {
 
 
 func (this *Server) WatchFilesChange() {
-	fmt.Println("WatchFilesChange func is called!")
 	var (
 		w *watcher.Watcher
 		//fileInfo FileInfo
@@ -497,7 +496,6 @@ func (this *Server) WatchFilesChange() {
 }
 
 func (this *Server) GetFilePathByInfo(fileInfo *FileInfo, withDocker bool) string {
-	fmt.Println("GetFilePathByInfo func is called!")
 	var (
 		fn string
 	)
@@ -512,7 +510,6 @@ func (this *Server) GetFilePathByInfo(fileInfo *FileInfo, withDocker bool) strin
 	return fileInfo.Path + "/" + fn
 }
 func (this *Server) CheckFileExistByInfo(md5s string, fileInfo *FileInfo) bool {
-	fmt.Println("CheckFileExistByInfo func is called!")
 	var (
 		err      error
 		fullpath string
@@ -541,7 +538,6 @@ func (this *Server) CheckFileExistByInfo(md5s string, fileInfo *FileInfo) bool {
 	}
 }
 func (this *Server) ParseSmallFile(filename string) (string, int64, int, error) {
-	fmt.Println("ParseSmallFile func is called!")
 	var (
 		err    error
 		offset int64
@@ -572,7 +568,6 @@ func (this *Server) ParseSmallFile(filename string) (string, int64, int, error) 
 	return pos[0], offset, length, nil
 }
 func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
-	fmt.Println("DownloadFromPeer func is called!")
 	var (
 		err         error
 		filename    string
@@ -616,11 +611,9 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 	if _, err = os.Stat(fileInfo.Path); err != nil {
 		os.MkdirAll(DOCKER_DIR+fileInfo.Path, 0775)
 	}
-	fmt.Println("downloadFromPeer  fileInfo ",fileInfo)
 	p := strings.Replace(fileInfo.Path, STORE_DIR_NAME+"/", "", 1)
 	//filename=this.util.UrlEncode(filename)
 	downloadUrl = peer + "/" + Config().Group + "/" + p + "/" + filename
-	fmt.Println("downloadFromPeer  downloadUrl",downloadUrl)
 	log.Info("DownloadFromPeer: ", downloadUrl)
 	fpath = DOCKER_DIR + fileInfo.Path + "/" + filename
 	fpathTmp = DOCKER_DIR + fileInfo.Path + "/" + fmt.Sprintf("%s_%s", "tmp_", filename)
@@ -684,7 +677,6 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 			return
 		}
 		this.SaveFileMd5Log(fileInfo, CONST_FILE_Md5_FILE_NAME)
-		fmt.Println("1111111111  upload file success!!!")
 		return
 	}
 	if err = req.ToFile(fpathTmp); err != nil {
@@ -695,7 +687,6 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 	}
 	if fi, err = os.Stat(fpathTmp); err != nil {
 		os.Remove(fpathTmp)
-		fmt.Println("22222222222  upload file success!!!")
 		return
 	}
 
@@ -710,7 +701,6 @@ func (this *Server) DownloadFromPeer(peer string, fileInfo *FileInfo) {
 }
 
 func (this *Server) SetDownloadHeader(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("SetDownloadHeader func is called!")
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition", "attachment")
 }
@@ -720,8 +710,6 @@ func (this *Server) NotPermit(w http.ResponseWriter, r *http.Request) {
 }
 
 func (this *Server) GetFilePathFromRequest(w http.ResponseWriter, r *http.Request) (string, string) {
-	fmt.Println("GetFilePathFromRequest func is called!")
-	fmt.Println("GetFilePathFromRequest is called")
 	var (
 		err       error
 		fullpath  string
@@ -749,8 +737,6 @@ func (this *Server) GetFilePathFromRequest(w http.ResponseWriter, r *http.Reques
 }
 
 func (this *Server) GetSmallFileByURI(w http.ResponseWriter, r *http.Request) ([]byte, bool, error) {
-	fmt.Println("GetSmallFileByURI func is called!")
-	fmt.Println("GetSmallFileByURI func is called")
 	var (
 		err      error
 		data     []byte
@@ -777,7 +763,6 @@ func (this *Server) GetSmallFileByURI(w http.ResponseWriter, r *http.Request) ([
 	}
 }
 func (this *Server) DownloadSmallFileByURI(w http.ResponseWriter, r *http.Request) (bool, error) {
-	fmt.Println("DownloadSmallFileByURI func is called!")
 	var (
 		err        error
 		data       []byte
@@ -826,7 +811,6 @@ func (this *Server) DownloadSmallFileByURI(w http.ResponseWriter, r *http.Reques
 	return false, errors.New("not found")
 }
 func (this *Server) DownloadNormalFileByURI(w http.ResponseWriter, r *http.Request) (bool, error) {
-	fmt.Println("DownloadNormalFileByURI func is called!")
 	var (
 		err        error
 		isDownload bool
@@ -869,7 +853,6 @@ func (this *Server) DownloadNormalFileByURI(w http.ResponseWriter, r *http.Reque
 	return true, nil
 }
 func (this *Server) DownloadNotFound(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("DownloadNotFound func is called!")
 	var (
 		err        error
 		fullpath   string
@@ -911,7 +894,6 @@ func (this *Server) DownloadNotFound(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func (this *Server) Download(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Download func is called!")
 	var (
 		err       error
 		ok        bool
@@ -951,7 +933,6 @@ func (this *Server) Download(w http.ResponseWriter, r *http.Request) {
 
 }
 func (this *Server) DownloadFileToResponse(url string, w http.ResponseWriter, r *http.Request) {
-	fmt.Println("DownloadFileToResponse func is called!")
 	var (
 		err  error
 		req  *httplib.BeegoHTTPRequest
@@ -970,7 +951,6 @@ func (this *Server) DownloadFileToResponse(url string, w http.ResponseWriter, r 
 	}
 }
 func (this *Server) ResizeImageByBytes(w http.ResponseWriter, data []byte, width, height uint) {
-	fmt.Println("ResizeImageByBytes func is called!")
 	var (
 		img     image.Image
 		err     error
@@ -992,7 +972,6 @@ func (this *Server) ResizeImageByBytes(w http.ResponseWriter, data []byte, width
 	}
 }
 func (this *Server) ResizeImage(w http.ResponseWriter, fullpath string, width, height uint) {
-	fmt.Println("ResizeImage func is called")
 	var (
 		img     image.Image
 		err     error
@@ -1024,7 +1003,6 @@ func (this *Server) GetServerURI(r *http.Request) string {
 	return fmt.Sprintf("http://%s/", r.Host)
 }
 func (this *Server) CheckFileAndSendToPeer(date string, filename string, isForceUpload bool) {
-	fmt.Println("CheckFileAndSendToPeer func is called")
 	var (
 		md5set mapset.Set
 		err    error
@@ -1066,9 +1044,29 @@ func (this *Server) CheckFileAndSendToPeer(date string, filename string, isForce
 	}
 }
 func (this *Server) postFileToPeer(fileInfo *FileInfo) {
-	fmt.Println("postFileToPeer func is called")
-	fmt.Println("postFileToPeer result is  fileInfo ",fileInfo.Path+"/"+fileInfo.Name)
-	fmt.Println("postFileToPeer result is  fileInfo struct  ",fileInfo)
+	fileName := fmt.Sprintf("%s/%s", fileInfo.Path, fileInfo.Name)
+	registry := &upload.ImageRegistry{
+		Username: "bjyimaike@163.com",
+		Password: "emcc7556",
+		ServerAddress: "registry.cn-beijing.aliyuncs.com",
+	}
+	//var image *upload.Image
+	/*image := &upload.Image {
+		Name: "registry.cn-beijing.aliyuncs.com/hiacloud/busybox",
+		Tag: "1.26.1",
+		OldName: "busybox",
+		OldTag: "latest",
+		Registry: registry,
+	}*/
+
+	image := &upload.Image {
+		Name: "registry.cn-beijing.aliyuncs.com/hiacloud/prometheus",
+		Tag: "v1.10.0",
+		OldName: "prom/prometheus",
+		OldTag: "latest",
+		Registry: registry,
+	}
+	saveImage(image, fileName)
 	var (
 		err      error
 		peer     string
@@ -1089,7 +1087,6 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			log.Error(string(buffer))
 		}
 	}()
-	//fmt.Println("postFile",fileInfo)
 	for i, peer = range Config().Peers {
 		_ = i
 		if fileInfo.Peers == nil {
@@ -1106,7 +1103,6 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			}
 		}
 		fpath = DOCKER_DIR + fileInfo.Path + "/" + filename
-		fmt.Println("aaaaaaaaaaaaaaaaaaaaa fpath is ", fpath)
 		if !this.util.FileExists(fpath) {
 			log.Warn(fmt.Sprintf("file '%s' not found", fpath))
 			continue
@@ -1120,8 +1116,6 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			}
 		}
 		if fileInfo.OffSet != -2 && Config().EnableDistinctFile {
-			//not migrate file should check or update file
-			// where not EnableDistinctFile should check
 			if info, err = this.checkPeerFileExist(peer, fileInfo.Md5, ""); info.Md5 != "" {
 				fileInfo.Peers = append(fileInfo.Peers, peer)
 				if _, err = this.SaveFileInfoToLevelDB(fileInfo.Md5, fileInfo, this.ldb); err != nil {
@@ -1131,8 +1125,6 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			}
 		}
 		postURL = fmt.Sprintf("%s%s", peer, this.getRequestURI("syncfile_info"))
-		fmt.Println("bbbbbbbbbbbbb peer is", peer)
-		fmt.Println("bbbbbbbbbbbbb postURL is", postURL)
 		b := httplib.Post(postURL)
 		b.SetTimeout(time.Second*30, time.Second*30)
 		if data, err = json.Marshal(fileInfo); err != nil {
@@ -1164,10 +1156,8 @@ func (this *Server) postFileToPeer(fileInfo *FileInfo) {
 			log.Error(err)
 		}
 	}
-
 }
 func (this *Server) SaveFileMd5Log(fileInfo *FileInfo, filename string) {
-	fmt.Println("SaveFileMd5Log func is called")
 	var (
 		info FileInfo
 	)
@@ -1178,7 +1168,6 @@ func (this *Server) SaveFileMd5Log(fileInfo *FileInfo, filename string) {
 	this.queueFileLog <- &FileLog{FileInfo: &info, FileName: filename}
 }
 func (this *Server) saveFileMd5Log(fileInfo *FileInfo, filename string) {
-	fmt.Println("saveFileMd5Log func is called")
 	var (
 		err      error
 		outname  string
@@ -1248,7 +1237,6 @@ func (this *Server) saveFileMd5Log(fileInfo *FileInfo, filename string) {
 	this.SaveFileInfoToLevelDB(logKey, fileInfo, this.logDB)
 }
 func (this *Server) checkPeerFileExist(peer string, md5sum string, fpath string) (*FileInfo, error) {
-	fmt.Println("checkPeerFileExist func is called")
 	var (
 		err      error
 		fileInfo FileInfo
@@ -1268,11 +1256,9 @@ func (this *Server) checkPeerFileExist(peer string, md5sum string, fpath string)
 
 
 func (this *Server) IsExistFromLevelDB(key string, db *leveldb.DB) (bool, error) {
-	fmt.Println("IsExistFromLevelDB func is called")
 	return db.Has([]byte(key), nil)
 }
 func (this *Server) GetFileInfoFromLevelDB(key string) (*FileInfo, error) {
-	fmt.Println("GetFileInfoFromLevelDB func is called")
 	var (
 		err      error
 		data     []byte
@@ -1287,7 +1273,6 @@ func (this *Server) GetFileInfoFromLevelDB(key string) (*FileInfo, error) {
 	return &fileInfo, nil
 }
 func (this *Server) SaveStat() {
-	fmt.Println("SaveStat func is called")
 	SaveStatFunc := func() {
 		defer func() {
 			if re := recover(); re != nil {
@@ -1314,7 +1299,6 @@ func (this *Server) SaveStat() {
 	SaveStatFunc()
 }
 func (this *Server) RemoveKeyFromLevelDB(key string, db *leveldb.DB) error {
-	fmt.Println("RemoveKeyFromLevelDB func is called")
 	var (
 		err error
 	)
@@ -1322,7 +1306,6 @@ func (this *Server) RemoveKeyFromLevelDB(key string, db *leveldb.DB) error {
 	return err
 }
 func (this *Server) SaveFileInfoToLevelDB(key string, fileInfo *FileInfo, db *leveldb.DB) (*FileInfo, error) {
-	fmt.Println("SaveFileInfoToLevelDB func is called")
 	var (
 		err  error
 		data []byte
@@ -1344,7 +1327,6 @@ func (this *Server) SaveFileInfoToLevelDB(key string, fileInfo *FileInfo, db *le
 	return fileInfo, nil
 }
 func (this *Server) IsPeer(r *http.Request) bool {
-	fmt.Println("IsPeer func is called")
 	var (
 		ip    string
 		peer  string
@@ -1375,7 +1357,6 @@ func (this *Server) IsPeer(r *http.Request) bool {
 
 
 func (this *Server) GetClusterNotPermitMessage(r *http.Request) string {
-	fmt.Println("GetClusterNotPermitMessage func is called")
 	var (
 		message string
 	)
@@ -1384,7 +1365,6 @@ func (this *Server) GetClusterNotPermitMessage(r *http.Request) string {
 }
 
 func (this *Server) GetMd5sMapByDate(date string, filename string) (*goutil.CommonMap, error) {
-	fmt.Println("GetMd5sMapByDate func is called")
 	var (
 		err     error
 		result  *goutil.CommonMap
@@ -1421,7 +1401,6 @@ func (this *Server) GetMd5sMapByDate(date string, filename string) (*goutil.Comm
 	return result, nil
 }
 func (this *Server) GetMd5sByDate(date string, filename string) (mapset.Set, error) {
-	fmt.Println("GetMd5sByDate func is called")
 	var (
 		keyPrefix string
 		md5set    mapset.Set
@@ -1442,7 +1421,6 @@ func (this *Server) GetMd5sByDate(date string, filename string) (mapset.Set, err
 }
 
 func (this *Server) CheckScene(scene string) (bool, error) {
-	fmt.Println("CheckScene func is called")
 	var (
 		scenes []string
 	)
@@ -1459,7 +1437,6 @@ func (this *Server) CheckScene(scene string) (bool, error) {
 }
 
 func (this *Server) getRequestURI(action string) string {
-	fmt.Println("getRequestURI func is called")
 	var (
 		uri string
 	)
@@ -1470,61 +1447,8 @@ func (this *Server) getRequestURI(action string) string {
 	}
 	return uri
 }
-func (this *Server) BuildFileResult(fileInfo *FileInfo, r *http.Request) FileResult {
-	fmt.Println("BuildFileResult func is called")
-	var (
-		outname     string
-		fileResult  FileResult
-		p           string
-		downloadUrl string
-		domain      string
-		host        string
-	)
-	host = strings.Replace(Config().Host, "http://", "", -1)
-	if r != nil {
-		host = r.Host
-	}
-	if !strings.HasPrefix(Config().DownloadDomain, "http") {
-		if Config().DownloadDomain == "" {
-			Config().DownloadDomain = fmt.Sprintf("http://%s", host)
-		} else {
-			Config().DownloadDomain = fmt.Sprintf("http://%s", Config().DownloadDomain)
-		}
-	}
-	if Config().DownloadDomain != "" {
-		domain = Config().DownloadDomain
-	} else {
-		domain = fmt.Sprintf("http://%s", host)
-	}
-	outname = fileInfo.Name
-	if fileInfo.ReName != "" {
-		outname = fileInfo.ReName
-	}
-	p = strings.Replace(fileInfo.Path, STORE_DIR_NAME+"/", "", 1)
-	if Config().SupportGroupManage {
-		p = Config().Group + "/" + p + "/" + outname
-	} else {
-		p = p + "/" + outname
-	}
-	downloadUrl = fmt.Sprintf("http://%s/%s", host, p)
-	if Config().DownloadDomain != "" {
-		downloadUrl = fmt.Sprintf("%s/%s", Config().DownloadDomain, p)
-	}
-	fileResult.Url = downloadUrl
-	fileResult.Md5 = fileInfo.Md5
-	fileResult.Path = "/" + p
-	fileResult.Domain = domain
-	fileResult.Scene = fileInfo.Scene
-	fileResult.Size = fileInfo.Size
-	fileResult.ModTime = fileInfo.TimeStamp
-	// Just for Compatibility aaa
-	fileResult.Src = fileResult.Path
-	fileResult.Scenes = fileInfo.Scene
-	fmt.Println("aaaaaaaaaaaaa  fileResult is ",fileResult)
-	return fileResult
-}
+
 func (this *Server) SaveUploadFile(file multipart.File, header *multipart.FileHeader, fileInfo *FileInfo, r *http.Request) (*FileInfo, error) {
-	fmt.Println("SaveUploadFile func is called")
 	var (
 		err     error
 		outFile *os.File
@@ -1604,11 +1528,9 @@ func (this *Server) SaveUploadFile(file multipart.File, header *multipart.FileHe
 	//fileInfo.Path = folder //strings.Replace( folder,DOCKER_DIR,"",1)
 	fileInfo.Path = strings.Replace(folder, DOCKER_DIR, "", 1)
 	fileInfo.Peers = append(fileInfo.Peers, this.host)
-	fmt.Println("bbbbbbbbbb   upload",fileInfo)
 	return fileInfo, nil
 }
 func (this *Server) Upload(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Upload func is called")
 	var (
 		err    error
 		fn     string
@@ -1647,11 +1569,9 @@ func (this *Server) Upload(w http.ResponseWriter, r *http.Request) {
 	done := make(chan bool, 1)
 	this.queueUpload <- WrapReqResp{&w, r, done}
 	<-done
-	fmt.Println("Upload End")
 }
 
 func (this *Server) SaveSmallFile(fileInfo *FileInfo) error {
-	fmt.Println("SaveSmallFile func is called")
 	var (
 		err      error
 		filename string
@@ -1710,7 +1630,6 @@ func (this *Server) SaveSmallFile(fileInfo *FileInfo) error {
 	return nil
 }
 func (this *Server) SendToMail(to, subject, body, mailtype string) error {
-	fmt.Println("SendToMail func is called")
 	host := Config().Mail.Host
 	user := Config().Mail.User
 	password := Config().Mail.Password
@@ -1728,7 +1647,6 @@ func (this *Server) SendToMail(to, subject, body, mailtype string) error {
 	return err
 }
 func (this *Server) BenchMark(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("BenchMark func is called")
 	t := time.Now()
 	batch := new(leveldb.Batch)
 	for i := 0; i < 100000000; i++ {
@@ -1750,14 +1668,12 @@ func (this *Server) BenchMark(w http.ResponseWriter, r *http.Request) {
 			}
 			fmt.Println(i, time.Since(t).Seconds())
 		}
-		//fmt.Println(server.GetFileInfoFromLevelDB(s))
 	}
 	this.util.WriteFile("time.txt", time.Since(t).String())
 	fmt.Println(time.Since(t).String())
 }
 
 func (this *Server) GetStat() []StatDateFileInfo {
-	fmt.Println("GetStat func is called")
 	var (
 		min   int64
 		max   int64
@@ -1807,7 +1723,6 @@ func (this *Server) GetStat() []StatDateFileInfo {
 	return rows
 }
 func (this *Server) RegisterExit() {
-	fmt.Println("RegisterExit func is called")
 	c := make(chan os.Signal)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
@@ -1822,21 +1737,18 @@ func (this *Server) RegisterExit() {
 	}()
 }
 func (this *Server) AppendToQueue(fileInfo *FileInfo) {
-	fmt.Println("AppendToQueue func is called")
 	for (len(this.queueToPeers) + CONST_QUEUE_SIZE/10) > CONST_QUEUE_SIZE {
 		time.Sleep(time.Millisecond * 50)
 	}
 	this.queueToPeers <- *fileInfo
 }
 func (this *Server) AppendToDownloadQueue(fileInfo *FileInfo) {
-	fmt.Println("AppendToDownloadQueue func is called")
 	for (len(this.queueFromPeers) + CONST_QUEUE_SIZE/10) > CONST_QUEUE_SIZE {
 		time.Sleep(time.Millisecond * 50)
 	}
 	this.queueFromPeers <- *fileInfo
 }
 func (this *Server) ConsumerDownLoad() {
-	fmt.Println("ConsumerDownLoad func is called")
 	ConsumerFunc := func() {
 		for {
 			fileInfo := <-this.queueFromPeers
@@ -1861,7 +1773,6 @@ func (this *Server) ConsumerDownLoad() {
 	}
 }
 func (this *Server) RemoveDownloading() {
-	fmt.Println("RemoveDownloading func is called")
 	RemoveDownloadFunc := func() {
 		for {
 			iter := this.ldb.NewIterator(util.BytesPrefix([]byte("downloading_")), nil)
@@ -1881,7 +1792,6 @@ func (this *Server) RemoveDownloading() {
 	go RemoveDownloadFunc()
 }
 func (this *Server) ConsumerLog() {
-	fmt.Println("ConsumerLog func is called!")
 	go func() {
 		var (
 			fileLog *FileLog
@@ -1894,7 +1804,6 @@ func (this *Server) ConsumerLog() {
 }
 
 func (this *Server) ConsumerPostToPeer() {
-	fmt.Println("ConsumerPostToPeer func is called!")
 	ConsumerFunc := func() {
 		for {
 			fileInfo := <-this.queueToPeers
@@ -1906,7 +1815,6 @@ func (this *Server) ConsumerPostToPeer() {
 	}
 }
 func (this *Server) ConsumerUpload() {
-	fmt.Println("ConsumerUpload func is called!")
 	ConsumerFunc := func() {
 		for {
 			wr := <-this.queueUpload
@@ -1928,7 +1836,6 @@ func (this *Server) ConsumerUpload() {
 }
 
 func (this *Server) CleanLogLevelDBByDate(date string, filename string) {
-	fmt.Println("CleanLogLevelDBByDate func is called!")
 	defer func() {
 		if re := recover(); re != nil {
 			buffer := debug.Stack()
@@ -1959,7 +1866,6 @@ func (this *Server) CleanLogLevelDBByDate(date string, filename string) {
 }
 
 func (this *Server) LoadFileInfoByDate(date string, filename string) (mapset.Set, error) {
-	fmt.Println("LoadFileInfoByDate func is called!")
 	defer func() {
 		if re := recover(); re != nil {
 			buffer := debug.Stack()
@@ -1989,7 +1895,6 @@ func (this *Server) LoadFileInfoByDate(date string, filename string) (mapset.Set
 }
 
 func (this *Server) LoadQueueSendToPeer() {
-	fmt.Println("LoadQueueSendToPeer func is called!")
 	if queue, err := this.LoadFileInfoByDate(this.util.GetToDay(), CONST_Md5_QUEUE_FILE_NAME); err != nil {
 		log.Error(err)
 	} else {
@@ -2001,7 +1906,6 @@ func (this *Server) LoadQueueSendToPeer() {
 }
 
 func (this *Server) CheckClusterStatus() {
-	fmt.Println("CheckClusterStatus is called!!")
 	check := func() {
 		defer func() {
 			if re := recover(); re != nil {
@@ -2067,8 +1971,6 @@ func (this *Server) Index(w http.ResponseWriter, r *http.Request) {
 			uploadUrl = fmt.Sprintf("/%s/upload", Config().Group)
 			uploadBigUrl = fmt.Sprintf("/%s%s", Config().Group, CONST_BIG_UPLOAD_PATH_SUFFIX)
 		}
-		fmt.Println("Index func is beginning ")
-		fmt.Println("uploadBigUrl is", uploadBigUrl)
 		uppy = `<html>
 			  
 			  <head>
@@ -2121,7 +2023,7 @@ func (this *Server) Index(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.Write([]byte("web upload deny"))
 	}
-	fmt.Println("Index func ends! ")
+
 }
 func init() {
 	flag.Parse()
@@ -2135,7 +2037,6 @@ func init() {
 		msg := fmt.Sprintf("please change directory to '%s' start fileserver\n", appDir)
 		msg = msg + fmt.Sprintf("请切换到 '%s' 目录启动 fileserver ", appDir)
 		log.Warn(msg)
-		fmt.Println(msg)
 		os.Exit(1)
 	}
 	DOCKER_DIR = os.Getenv("GO_FASTDFS_DIR")
@@ -2201,8 +2102,6 @@ type httpError struct {
 }
 
 func (err httpError) StatusCode() int {
-	fmt.Println("StatusCode func is called!!")
-	fmt.Println("StatusCode is ", err.statusCode)
 	return err.statusCode
 }
 func (err httpError) Body() []byte {
@@ -2210,8 +2109,6 @@ func (err httpError) Body() []byte {
 }
 //cancal autConfig
 func (store hookDataStore) NewUpload(info tusd.FileInfo) (id string, err error) {
-	fmt.Println("NewUpload is called!!")
-	fmt.Println("FileInfo is ",info)
 	return store.DataStore.NewUpload(info)
 }
 
@@ -2221,7 +2118,7 @@ func (this *Server) initTus() {
 		fileLog *os.File
 		bigDir  string
 	)
-	fmt.Println("tus is beginning")
+
 	BIG_DIR := STORE_DIR + "/_big/"
 	os.MkdirAll(BIG_DIR, 0775)
 	os.MkdirAll(LOG_DIR, 0775)
@@ -2420,13 +2317,10 @@ func (this *Server) initTus() {
 	if err != nil {
 		log.Error(err)
 	}
-	fmt.Println("UpFile info is",bigDir)
-	fmt.Println("InitTus  ends!! ")
 	http.Handle(bigDir, http.StripPrefix(bigDir, handler))
 }
 
 func (this *Server) FormatStatInfo() {
-	fmt.Println("FormatStatInfo func is called!!")
 	var (
 		data  []byte
 		err   error
@@ -2535,7 +2429,6 @@ type HttpHandler struct {
 }
 
 func (HttpHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("ServeHTTP func is called!!")
 	status_code := "200"
 	defer func(t time.Time) {
 		logStr := fmt.Sprintf("[Access] %s | %s | %s | %s | %s |%s",
@@ -2562,14 +2455,12 @@ func (HttpHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 /*	if Config().EnableCrossOrigin {
 		server.CrossOrigin(res, req)
 	}*/
-	fmt.Println("ServeHTTP  status_code",status_code)
 	http.DefaultServeMux.ServeHTTP(res, req)
 }
 func (this *Server) Main() {
 	go func() {
 		for {
 			this.CheckFileAndSendToPeer(this.util.GetToDay(), CONST_Md5_ERROR_FILE_NAME, false)
-			//fmt.Println("CheckFileAndSendToPeer")
 			time.Sleep(time.Second * time.Duration(Config().RefreshInterval))
 			//this.util.RemoveEmptyDir(STORE_DIR)
 		}
@@ -2610,22 +2501,15 @@ func (this *Server) Main() {
 func saveImage(image *upload.Image, fileName string) error {
 	absFilePath := utils.AbsPath()
 	fileName = fmt.Sprintf("%s/%s", absFilePath, fileName)
+	fmt.Println("load image is ", fileName)
 	//fileName := "/root/go/docker/busybox.tar"
 	//fmt.Sprintf("%s:%s", image.OldName, image.OldTag)
-	registry := &upload.ImageRegistry{
-		Username: "bjyimaike@163.com",
-		Password: "emcc7556",
-		ServerAddress: "registry.cn-beijing.aliyuncs.com",
-	}
+	//oldImage string, newImage string, newImageTag string
+	oldImage := fmt.Sprintf("%s:%s", image.OldName, image.OldTag)
+	newImage := fmt.Sprintf("%s:%s", image.Name, image.Tag)
+	fmt.Println("oldImage is ", oldImage)
+	fmt.Println("newImage is ", newImage)
 	var client *docker.Client = upload.NewClient()
-	//var image *upload.Image
-	image = &upload.Image {
-		Name: "registry.cn-beijing.aliyuncs.com/hiacloud/busybox",
-		Tag: "latest",
-		OldName: "busybox",
-		OldTag: "latest",
-		Registry: registry,
-	}
 	mes, err := image.LoadImage(client, fileName)
 	if err != nil {
 		fmt.Println("Load Image is fail")
@@ -2647,13 +2531,9 @@ func saveImage(image *upload.Image, fileName string) error {
 				return nil
 			}
 		}
-
 	}
 }
 
 func main() {
 	server.Main()
-	fmt.Println("server info ", server)
-	// save upload
-
 }
