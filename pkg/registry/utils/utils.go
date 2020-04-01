@@ -1,13 +1,16 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 )
 
-// absolute path by relative path
-func AbsPath() string, error {
-	return filepath.Abs(filepath.Dir(os.Args[0]))
+func AbsPath() string {
+	// absolute path by relative path
+	absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return absPath
 }
